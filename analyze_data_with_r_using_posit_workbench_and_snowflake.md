@@ -44,7 +44,7 @@ or look at the materials provided in the accompanying repository:
 ## Setup
 Duration: 3
 
-Before we begin there are a few components we need to get ready. We need to:
+Before we begin there are a few components we need to prepare. We need to:
 
 - Add the heart failure data to Snowflake
 - Launch the Posit Workbench Native App
@@ -59,7 +59,7 @@ We'll walk through how to download the data from UCI and then upload it to Snowf
 
 > **_INTERACTIVITY NOTE:_** If you have the necessary permissions in Snowflake, you can also import the data from the [S3 bucket](s3://heart-failure-records/heart_failure.csv).
 
-#### Step 1: Downlaod the data as a CSV
+#### Step 1: Download the data as a CSV
 
 Download the data from UCI [here](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records), and then unzip the downloaded file. 
 
@@ -126,8 +126,8 @@ When prompted, select the RStudio Pro IDE.
 #### Step 3: Log into your Snowflake account
 
 Next, connect to your Snowflake account from within Posit Workbench.
-Under `Credentials`, click on the button with the Snowflake icon to sign into
-Snowflake. Follow the sign in prompts.
+Under `Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
+Follow the sign in prompts.
 
 ![](assets/posit_workbench/03-snowflake_login.png)
 
@@ -250,7 +250,7 @@ heart_failure <- tbl(conn, "HEART_FAILURE")
 
 ### Rely on `{dbplyr}` to translate R to SQL
 
-We can now use `heart_failure` as it was a tibble in R. For example, we can filter rows and select columns from our data.
+We can now use `heart_failure` as if it was a tibble in R. For example, we can filter rows and select columns from our data.
 
 ```r
 heart_failure_young <-
@@ -421,8 +421,7 @@ The heart failure data provides important insights that can help us:
 - Predict future survival outcomes based on historical clinical data
 - Benchmark patient outcomes based on clinical indicators like serum sodium levels
 
-Visualizing these clinical variables over time or across different patient groups is one way
-to detect patterns that could inform treatment strategies.
+Visualizing clinical variables across different patient groups can help identify patterns.
 
 ### Visualize serum sodium levels
 
@@ -434,7 +433,7 @@ heart_failure |>
     death_event = as.character(death_event), 
     diabetes = as.character(diabetes)
   ) |> 
-  ggplot(aes(y = serum_sodium, fill = diabetes, x = death_event)) +
+  ggplot(aes(x = death_event, y = serum_sodium, fill = diabetes)) +
   geom_boxplot() +
   labs(
     title = "Serum Sodium Levels by Diabetes Status and Survival Outcome",
