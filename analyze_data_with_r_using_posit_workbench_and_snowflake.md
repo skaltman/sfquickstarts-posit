@@ -12,11 +12,10 @@ tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 ## Overview
 Duration: 1
 
-This guide will show you how to use the R language to analyze data stored in Snowflake. It will take you through the process of setting up an R environment in an RStudio Pro IDE, which comes with the Posit Workbench Native App in Snowflake. It will also show you how to use R's `{dbplyr}` interface to translate R code into SQL where it can be run within a Snowflake database, which is an environment that provides more memory and compute power than the typical R environment.
+This guide will walk you through using R to analyze data in Snowflake using the Posit
+Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use available RStudio Pro IDE. You'll also learn how to use the `{dbplyr}` package to translate R code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 
-We will explore a healthcare use case of analyzing heart failure data.
-
-First, we will explain how to add the heart failure dataset to Snowflake. We will then launch an R session and access the data from R, where we will clean, transform, and plot the data, preparing both an HTML report and an interactive Shiny app of our analysis. We will also demonstrate how to write into a Snowflake database from R. In this way, the guide will show you how to do an end-to-end R analysis _entirely within Snowflake_.
+We'll focus on a healthcare example by analyzing heart failure data. We'll then guide you through launching an R session, accessing the data, and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—-completing an end-to-end R analysis _entirely within Snowflake_.
 
 ![](assets/overview/architecture.png)
 
@@ -36,7 +35,7 @@ First, we will explain how to add the heart failure dataset to Snowflake. We wil
 - A Quarto document that contains plots and tables built with R, using data stored in Snowflake.
 - An interactive Shiny Application built with R, using data stored in Snowflake.
 
-Along the way, you will use R to analyze which variables are associated with the survival patients with heart failure.
+Along the way, you will use R to analyze which variables are associated with survival among patients with heart failure.
 You can follow along with this quickstart guide,
 or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-r>.
@@ -53,7 +52,7 @@ Before we begin there are a few components we need to prepare. We need to:
 
 ### Add the heart failure data to Snowflake
 
-For this analysis, we will use the [Heart Failure Clinical Records](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) dataset. The data is available for download as a CSV from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records). You can also access the data from this [S3 bucket](s3://heart-failure-records/heart_failure.csv).
+For this analysis, we'll use the [Heart Failure Clinical Records](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) dataset. The data is available for download as a CSV from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records). You can also access the data from this [S3 bucket](s3://heart-failure-records/heart_failure.csv).
 
 We'll walk through how to download the data from UCI and then upload it to Snowflake from a CSV.
 
@@ -71,7 +70,7 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the
 
 #### Step 3: Load data
 
-Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Specify an existing database or create a new one for the heart failure data. Then, select `+ Create a new table` and name it `HEART_FAILURE`.
+Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Specify an existing database or create a new one for the heart failure data (we called ours `HEART_FAILURE`). Then, select `+ Create a new table` and name it `HEART_FAILURE`.
 
 Once your find the database, you can load it into your Snowflake account by clicking the Get button on the right-hand side.
 
@@ -85,8 +84,8 @@ You should now be able to see the heart failure data in Snowsight. Navigate to `
 
 ### Launch Posit Workbench
 
-We can then start our data exploration using Posit Workbench.
-You can find Posit Workbench as a Snowflake Native Application,
+We can now start exploring the data using Posit Workbench.
+You can find Posit Workbench as a Snowflake Native Application
 and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
@@ -150,7 +149,7 @@ your entire analysis will occur securely within Snowflake.
 #### Step 5: Access the Quickstart Materials
 
 This Quickstart will step you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd>.
-To follow along, open the file in your RStudio Pro IDE. You could do this by:
+To follow along, open the file in your RStudio Pro IDE. There are two ways to do this:
 
 1. **Simple copy-and-paste** Go to File > New File > Quarto Document and then copy the contents of [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/quarto.qmd) into your new file.
 2. **Starting a new project linked to the github repo.** To do this:
@@ -215,7 +214,7 @@ without having to write raw SQL. Let's take a look at how this works.
 
 ### Connect with `{DBI}`
 
-`{DBI}` is an a R package that allows us to connect to databases with `DBI::dbConnect()`.
+`{DBI}` is an R package that allows us to connect to databases with `DBI::dbConnect()`.
 
 To connect to our Snowflake database, we will use a driver provided by the `{odbc}` package. We will need to provide a `warehouse` for compute, and a `database` to connect to.
 We can also provide a `schema` here to make connecting to specific tables and views easier.
@@ -356,7 +355,8 @@ is why we passed `heart_failure_young_df`, the result of calling `collect()` on 
 dbWriteTable(conn, name = "HEART_FAILURE_YOUNG", value = heart_failure_young_df)
 ```
 
-To append to an existing table, specify `append = TRUE`. If appending, `name` should specify an existing table.
+To append to an existing table, specify `append = TRUE`. If appending, the `name` 
+argument should refer to an existing table.
 
 Now that we understand how R will interact with the database, we can use R to perform our analysis.
 
@@ -382,7 +382,7 @@ heart_failure <-
 
 ### Filter ages
 
-For now, we'll focus on just patients younger than 50. We also reduce the data to just the columns we are interested in.
+For now, we'll focus on just patients younger than 50. We also reduce the data to just the columns we're interested in.
 
 ```r
 heart_failure <-
@@ -425,7 +425,7 @@ Visualizing clinical variables across different patient groups can help identify
 
 ### Visualize serum sodium levels
 
-We can use `{ggplot2}` to visually compare serum sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
+We can use `{ggplot2}` to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
 
 ```r
 heart_failure |> 
@@ -480,9 +480,11 @@ comparison <-
   heart_failure |> 
   group_by(death_event, diabetes) |> 
   summarize(
-    median_age = median(age, na.rm = TRUE),
-    median_serum_creatinine = median(serum_creatinine, na.rm = TRUE),
-    median_serum_sodium = median(serum_sodium, na.rm = TRUE),
+    across(
+      c("age", "serum_creatinine", "serum_sodium"), 
+      \(x) median(x, na.rm = TRUE), 
+      .names = "median_{.col}"
+    ),
     .groups = "drop"
   )
   
@@ -518,7 +520,6 @@ comparison |>
   ) |> 
   arrange(desc(death_event), desc(diabetes)) |> 
   gt(rowname_col = "death_event") |> 
-  fmt_number(decimals = 1) |> 
   cols_label(
     diabetes = "Diabetes Status",
     median_age = "Median Age",
@@ -531,14 +532,10 @@ comparison |>
   data_color(
     columns = c(median_serum_creatinine, median_serum_sodium),
     palette = "Blues"
-  ) |> 
-  tab_style(
-    style = cell_text(weight = "bold"),
-    locations = cells_row_groups(groups = everything())
-  )
+  ) 
 ```
 
-<div id="tbjpczuppu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="uthqldrznh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
   
   <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #333333; font-size: 16px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: auto; border-top-style: solid; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3;" bgcolor="#FFFFFF">
   <thead style="border-style: none;">
@@ -558,23 +555,23 @@ comparison |>
     <tr style="border-style: none;"><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub" style="border-style: none; padding-top: 8px; padding-bottom: 8px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; text-align: left;" valign="middle" bgcolor="#FFFFFF" align="left">Survived</th>
 <td headers="stub_1_1 diabetes" class="gt_row gt_left" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: left;" valign="middle" align="left">Yes</td>
 <td headers="stub_1_1 median_age" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums;" valign="middle" align="right">45.0</td>
-<td headers="stub_1_1 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #F7FBFF; color: #000000;" bgcolor="#F7FBFF" valign="middle" align="right">0.9</td>
-<td headers="stub_1_1 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #3987C0; color: #FFFFFF;" bgcolor="#3987C0" valign="middle" align="right">137.0</td></tr>
+<td headers="stub_1_1 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #F7FBFF; color: #000000;" bgcolor="#F7FBFF" valign="middle" align="right">0.90</td>
+<td headers="stub_1_1 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #3987C0; color: #FFFFFF;" bgcolor="#3987C0" valign="middle" align="right">137</td></tr>
     <tr style="border-style: none;"><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub" style="border-style: none; padding-top: 8px; padding-bottom: 8px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; text-align: left;" valign="middle" bgcolor="#FFFFFF" align="left">Survived</th>
 <td headers="stub_1_2 diabetes" class="gt_row gt_left" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: left;" valign="middle" align="left">No</td>
 <td headers="stub_1_2 median_age" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums;" valign="middle" align="right">42.0</td>
-<td headers="stub_1_2 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #D3E4F3; color: #000000;" bgcolor="#D3E4F3" valign="middle" align="right">1.0</td>
-<td headers="stub_1_2 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #08306B; color: #FFFFFF;" bgcolor="#08306B" valign="middle" align="right">139.0</td></tr>
+<td headers="stub_1_2 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #D3E4F3; color: #000000;" bgcolor="#D3E4F3" valign="middle" align="right">1.00</td>
+<td headers="stub_1_2 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #08306B; color: #FFFFFF;" bgcolor="#08306B" valign="middle" align="right">139</td></tr>
     <tr style="border-style: none;"><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub" style="border-style: none; padding-top: 8px; padding-bottom: 8px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; text-align: left;" valign="middle" bgcolor="#FFFFFF" align="left">Died</th>
 <td headers="stub_1_3 diabetes" class="gt_row gt_left" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: left;" valign="middle" align="left">Yes</td>
 <td headers="stub_1_3 median_age" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums;" valign="middle" align="right">45.5</td>
-<td headers="stub_1_3 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #08306B; color: #FFFFFF;" bgcolor="#08306B" valign="middle" align="right">1.5</td>
-<td headers="stub_1_3 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #F7FBFF; color: #000000;" bgcolor="#F7FBFF" valign="middle" align="right">133.0</td></tr>
+<td headers="stub_1_3 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #08306B; color: #FFFFFF;" bgcolor="#08306B" valign="middle" align="right">1.45</td>
+<td headers="stub_1_3 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #F7FBFF; color: #000000;" bgcolor="#F7FBFF" valign="middle" align="right">133</td></tr>
     <tr style="border-style: none;"><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub" style="border-style: none; padding-top: 8px; padding-bottom: 8px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; text-align: left;" valign="middle" bgcolor="#FFFFFF" align="left">Died</th>
 <td headers="stub_1_4 diabetes" class="gt_row gt_left" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: left;" valign="middle" align="left">No</td>
 <td headers="stub_1_4 median_age" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums;" valign="middle" align="right">45.0</td>
-<td headers="stub_1_4 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #A2CCE2; color: #000000;" bgcolor="#A2CCE2" valign="middle" align="right">1.1</td>
-<td headers="stub_1_4 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #6BAED6; color: #000000;" bgcolor="#6BAED6" valign="middle" align="right">136.0</td></tr>
+<td headers="stub_1_4 median_serum_creatinine" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #A2CCE2; color: #000000;" bgcolor="#A2CCE2" valign="middle" align="right">1.10</td>
+<td headers="stub_1_4 median_serum_sodium" class="gt_row gt_right" style="border-style: none; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; text-align: right; font-variant-numeric: tabular-nums; background-color: #6BAED6; color: #000000;" bgcolor="#6BAED6" valign="middle" align="right">136</td></tr>
   </tbody>
   
   
@@ -586,7 +583,7 @@ Now that we've accumulated some insights, let's think about how we might present
 ## Build Reports and Dashboards with Quarto
 Duration: 2
 
-We've conveniently written our analysis in a Quarto (.qmd) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
+We've conveniently written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
 [data products](https://quarto.org/docs/guide/) such as
 [documents](https://quarto.org/docs/output-formats/html-basics.html),
