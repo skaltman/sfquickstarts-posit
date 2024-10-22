@@ -22,7 +22,7 @@ We'll focus on a healthcare example by analyzing heart failure data. We'll then 
 ### What You'll Need
 
 - Familiarity with R
-- The ability to launch Posit Workbench from Snowflake Native Applications. This can be provided by an administrator with the `accountadmin` role.
+- The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
 
 ### What You’ll Learn
 
