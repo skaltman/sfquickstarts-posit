@@ -152,7 +152,7 @@ This Quickstart will step you through the analysis contained in <https://github.
 To follow along, open the file in your RStudio Pro IDE. There are two ways to do this:
 
 1. **Simple copy-and-paste** Go to File > New File > Quarto Document and then copy the contents of [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/quarto.qmd) into your new file.
-2. **Starting a new project linked to the github repo.** To do this:
+2. **Starting a new project linked to the GitHub repo.** To do this:
 
     1.  Go to File > New Project in the RStudio IDE menu bar.
 
@@ -170,7 +170,9 @@ To follow along, open the file in your RStudio Pro IDE. There are two ways to do
 
     ![](assets/rstudio/06-create-project.png)
 
-    RStudio will clone a local copy of the materials on github. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
+    RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
+    
+    > Note: SSH authentication is not available in Snowpark Container Services, so when creating projects from Git, you may need to authenticate Git operations over HTTPS, using a username and password or a personal access token.
 
 
 ### Install R Packages
@@ -181,17 +183,6 @@ we need to prepare the packages we will use. For this analysis, we will use the 
 ```r
 install.packages(c("tidyverse", "DBI", "dbplyr", "gt", "gtExtras", "odbc"))
 ```
-
-<!--
-We will also use the development version of the `{odbc}` package to connect to the Snowflake database.
-
-```r
-install.packages("pak")
-pak::pak("r-dbi/odbc")
-```
-
-
--->
 
 After we install the packages, we load them.
 
