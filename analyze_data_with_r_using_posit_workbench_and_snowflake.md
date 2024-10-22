@@ -96,7 +96,7 @@ In your Snowflake account, Go to `Data Products` > `Apps` to open the Native App
 
 #### Step 2: Open the Posit Workbench Native App
 
-Once Posit Workbench is installed, click on the app under `Installed Apps` to launch the app. If you do not see the Posit Workbench app listed, ask you Snowflake account administrator for access to the app.
+Once Posit Workbench is installed, click on the app under `Installed Apps` to launch the app. If you do not see the Posit Workbench app listed, ask your Snowflake account administrator for access to the app.
 
 ![](assets/snowflake/06-open_app.png)
 
