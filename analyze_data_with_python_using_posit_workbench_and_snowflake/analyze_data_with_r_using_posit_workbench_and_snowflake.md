@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 Duration: 1
 
 This guide will walk you through using Python to analyze data in Snowflake using the Posit
-Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available VS Code IDE. You'll also learn how to use the `{ibis}` library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
+Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available VS Code IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 
 We'll focus on a healthcare example by analyzing heart failure data. We'll then guide you through accessing the data, and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—-completing an end-to-end analysis in Python _entirely within Snowflake_.
 
@@ -256,12 +256,14 @@ we can filter rows and select columns from our data.
 heart_failure_filtered = (
     heart_failure.filter(heart_failure.AGE < 50)  # Filter to age < 50
     .rename(
-        age="AGE",
-        diabetes="DIABETES",
-        serum_sodium="SERUM_SODIUM",
-        serum_creatinine="SERUM_CREATININE",
-        sex="SEX",
-        death_event="DEATH_EVENT",
+        {
+            "age": "AGE",
+            "diabetes": "DIABETES",
+            "serum_sodium": "SERUM_SODIUM",
+            "serum_creatinine": "SERUM_CREATININE",
+            "sex": "SEX",
+            "death_event": "DEATH_EVENT",
+        }
     )
     .select(
         ["age", "diabetes", "serum_sodium", "serum_creatinine", "sex", "death_event"]
@@ -278,6 +280,25 @@ Snowflake with `.execute()` or `.to_pandas()`.
 
 ```python
 heart_failure_filtered.execute()
+```
+
+If we want to see the SQL code that Ibis generates, we can run `ibis.to_sql()`.
+
+```python
+ibis.to_sql(heart_failure_filtered)
+```
+
+```
+SELECT
+  "t0"."AGE" AS "age",
+  "t0"."DIABETES" AS "diabetes",
+  "t0"."SERUM_SODIUM" AS "serum_sodium",
+  "t0"."SERUM_CREATININE" AS "serum_creatinine",
+  "t0"."SEX" AS "sex",
+  "t0"."DEATH_EVENT" AS "death_event"
+FROM "HEART_FAILURE" AS "t0"
+WHERE
+  "t0"."AGE" < 50
 ```
 
 ### In summary
@@ -308,7 +329,7 @@ To insert data into an existing table, use [`insert()`](https://ibis-project.org
 
 Now that we understand how to interact with our database, we can use Python to perform our analysis.
 
-## Prepare data with `{dplyr}`
+## Prepare data with Ibis
 Duration: 5
 
 We want to understand which variables in `HEART_FAILURE` are associated with survival
@@ -316,51 +337,55 @@ of patients with heart failure.
 
 First we convert the column names to lowercase, so we won't need to worry about capitalization.
 
-```r
-# Standardize column names
-heart_failure <- 
-  heart_failure |> 
-  rename_with(str_to_lower)
+```python
+heart_failure = heart_failure.rename(
+    {
+        "age": "AGE",
+        "diabetes": "DIABETES",
+        "serum_sodium": "SERUM_SODIUM",
+        "serum_creatinine": "SERUM_CREATININE",
+        "sex": "SEX",
+        "death_event": "DEATH_EVENT",
+    }
+)
 ```
-
-> When we are running these commands on a database connection, `{dbplyr}` is translating the code into SQL for us under the hood.
-> We don't need to write raw SQL commands, and the compute is happening directly on the database.
-> You can pipe `|>` the code into `show_query()` if you want to see the generated SQL query.
 
 
 ### Filter ages
 
 For now, we'll focus on just patients younger than 50. We also reduce the data to just the columns we're interested in.
 
-```r
-heart_failure <-
-  heart_failure |> 
-  filter(age < 50) |> 
-  select(age, diabetes, serum_sodium, serum_creatinine, sex, death_event)
+```python
+heart_failure_filtered = (
+    heart_failure
+    .filter(heart_failure.age < 50)  # Filter to age < 50
+    .select(["age", "diabetes", "serum_sodium", "serum_creatinine", "sex", "death_event"])
+)
 ```
 
 Our table now looks like this.
 
-```
-# Source:   SQL [?? x 6]
-# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
-     age diabetes serum_sodium serum_creatinine   sex death_event
-   <dbl>    <dbl>        <dbl>            <dbl> <dbl>       <dbl>
- 1    45        0          137             1.1      1           1
- 2    49        0          138             1        0           0
- 3    45        0          127             0.8      1           1
- 4    48        1          121             1.9      0           1
- 5    49        0          136             1.1      1           1
- 6    45        1          139             1        1           1
- 7    45        0          145             1        1           1
- 8    45        0          137             1.18     0           0
- 9    42        1          136             1.3      0           1
-10    41        0          140             0.8      1           0
-# ℹ more rows
-# ℹ Use `print(n = ...)` to see more rows
-```
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━┓
+┃ age            ┃ diabetes ┃ serum_sodium ┃ serum_creatinine ┃ sex   ┃ death_event ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━┩
+│ decimal(38, 3) │ int64    │ int64        │ decimal(38, 2)   │ int64 │ int64       │
+├────────────────┼──────────┼──────────────┼──────────────────┼───────┼─────────────┤
+│         45.000 │        0 │          137 │             1.10 │     1 │           1 │
+│         49.000 │        0 │          138 │             1.00 │     0 │           0 │
+│         45.000 │        0 │          127 │             0.80 │     1 │           1 │
+│         48.000 │        1 │          121 │             1.90 │     0 │           1 │
+│         49.000 │        0 │          136 │             1.10 │     1 │           1 │
+│         45.000 │        1 │          139 │             1.00 │     1 │           1 │
+│         45.000 │        0 │          145 │             1.00 │     1 │           1 │
+│         45.000 │        0 │          137 │             1.18 │     0 │           0 │
+│         42.000 │        1 │          136 │             1.30 │     0 │           1 │
+│         41.000 │        0 │          140 │             0.80 │     1 │           0 │
+│              … │        … │            … │                … │     … │           … │
+└────────────────┴──────────┴──────────────┴──────────────────┴───────┴─────────────┘
 
-## Visualize Data with `{ggplot2}`
+> **_INTERACTIVITY NOTE:_** By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. [In interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`. 
+
+## Visualize Data with `plotnine`
 Duration: 5
 
 The heart failure data provides important insights that can help us:
@@ -373,114 +398,105 @@ Visualizing clinical variables across different patient groups can help identify
 
 ### Visualize serum sodium levels
 
-We can use `{ggplot2}` to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
+We can use [plotnine](https://plotnine.org/) to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
 
 ```r
-heart_failure |> 
-  mutate(
-    death_event = as.character(death_event), 
-    diabetes = as.character(diabetes)
-  ) |> 
-  ggplot(aes(x = death_event, y = serum_sodium, fill = diabetes)) +
-  geom_boxplot() +
-  labs(
-    title = "Serum Sodium Levels by Diabetes Status and Survival Outcome",
-    x = "Survival Outcome (0 = Survived, 1 = Died)",
-    y = "Serum Sodium (mEq/L)",
-    fill = "Diabetes"
-  ) +
-  theme(legend.position = "bottom")
+heart_failure_df = heart_failure_filtered.execute()
+
+# Convert columns to strings for plot
+heart_failure_df['death_event'] = heart_failure_df['death_event'].astype(str)
+heart_failure_df['diabetes'] = heart_failure_df['diabetes'].astype(str)
+
+(
+    ggplot(heart_failure_df, aes(x='death_event', y='serum_sodium', color='diabetes')) +
+    geom_boxplot() +
+    labs(
+        title="Serum Sodium Levels by Diabetes Status and Survival Outcome",
+        x="Survival Outcome (0 = Survived, 1 = Died)",
+        y="Serum Sodium (mEq/L)",
+        color="Diabetes"
+    ) +
+    theme(legend_position='bottom')
+)
 ```
 
 ![](assets/analysis/plot-sodium.png)
 
-> **_INTERACTIVITY NOTE:_**  The code above allows for easy visualization of other variables. You can adjust the `aes()` function or filter the data to explore different clinical indicators and patient characteristics.
+> **_INTERACTIVITY NOTE:_**  We first run `.execute()` to force the table expression to execute. This makes it easier to change the column types in preparation for plotting. We don't need to worry about unecessarily or prematurely executign the code because the plot code would fully evaluate the table expression anyways. 
 
-## Make publication-ready tables with `{gt}`
+## Make publication-ready tables with Great Tables
 Duration: 5
 
-We can continue exploring the heart failure dataset with visualizations or create a table that concisely displays multiple pieces of information at once. For example, we can use `{dplyr}` verbs to calculate the median values for various clinical metrics across different patient groups.
+We can continue exploring the heart failure dataset with visualizations or create a table that concisely displays multiple pieces of information at once. For example, we can use Ibis to calculate the median values for various clinical metrics across different patient groups.
 
-```r
-heart_failure |> 
-  summarize(
-    across(
-      c("age", "serum_creatinine", "serum_sodium"), 
-      \(x) median(x, na.rm = TRUE), 
-      .names = "median_{.col}"
+```python
+(
+    heart_failure_filtered
+    .group_by(["death_event", "diabetes"])
+    .aggregate(
+        median_age=heart_failure_filtered["age"].median(),
+        median_serum_creatinine=heart_failure_filtered["serum_creatinine"].median(),
+        median_serum_sodium=heart_failure_filtered["serum_sodium"].median()
     )
-  )
+)
 ```
 
-```
-# Source:   SQL [1 x 3]
-# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
-  median_age median_serum_creatinine median_serum_sodium
-       <dbl>                   <dbl>               <dbl>
-1         45                       1                 137
-```
+┏━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃ death_event ┃ diabetes ┃ median_age     ┃ median_serum_creatinine ┃ median_serum_sodium ┃
+┡━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ int64       │ int64    │ decimal(38, 3) │ decimal(38, 2)          │ float64             │
+├─────────────┼──────────┼────────────────┼─────────────────────────┼─────────────────────┤
+│           1 │        1 │         45.500 │                    1.45 │               133.0 │
+│           0 │        1 │         45.000 │                    0.90 │               137.0 │
+│           1 │        0 │         45.000 │                    1.10 │               136.0 │
+│           0 │        0 │         42.000 │                    1.00 │               139.0 │
+└─────────────┴──────────┴────────────────┴─────────────────────────┴─────────────────────┘
 
-With `{dplyr}`'s `group_by()` command, we can compute separate metrics for each
-combination of `death_event` and `diabetes`.
+This is a useful way to examine the information for ourselves. However, if we wish to share the information with others, we might prefer to present the table in a more polished format. We can do this with the [Great Tables](https://posit-dev.github.io/great-tables/articles/intro.html) package.
 
-```r
-comparison <- 
-  heart_failure |> 
-  group_by(death_event, diabetes) |> 
-  summarize(
-    across(
-      c("age", "serum_creatinine", "serum_sodium"), 
-      \(x) median(x, na.rm = TRUE), 
-      .names = "median_{.col}"
-    ),
-    .groups = "drop"
-  )
-  
-comparison
-```
+The following code prepares a table named `comparison` that we'll display with Great Tables. 
 
-```
-# Source:   SQL [4 x 5]
-# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
-  death_event diabetes median_age median_serum_creatinine median_serum_sodium
-        <dbl>    <dbl>      <dbl>                   <dbl>               <dbl>
-1           0        0       42                      1                    139
-2           1        1       45.5                    1.45                 133
-3           1        0       45                      1.1                  136
-4           0        1       45                      0.9                  137
-```
-
-This is a useful way to examine the information for ourselves. However, if we wish to share the information with others, we might prefer to present the table in a more polished format. We can do this with commands from R's [`{gt}` package](https://gt.rstudio.com/).
-
-The following code creates a table displaying the information in `comparison`.
-
-```r
-comparison |> 
-  mutate(
-    death_event = case_when(
-      death_event == 1 ~ "Died",
-      death_event == 0 ~ "Survived"
-    ),
-    diabetes = case_when(
-      diabetes == 1 ~ "Yes",
-      diabetes == 0 ~ "No"
+```python
+comparison = (
+    heart_failure_filtered
+    .group_by(["death_event", "diabetes"])
+    .aggregate(
+        median_age=heart_failure_filtered["age"].median(),
+        median_serum_creatinine=heart_failure_filtered["serum_creatinine"].median(),
+        median_serum_sodium=heart_failure_filtered["serum_sodium"].median()
     )
-  ) |> 
-  arrange(desc(death_event), desc(diabetes)) |> 
-  gt(rowname_col = "death_event") |> 
-  cols_label(
-    diabetes = "Diabetes Status",
-    median_age = "Median Age",
-    median_serum_creatinine = "Median Serum Creatinine (mg/dL)",
-    median_serum_sodium = "Median Serum Sodium (mEq/L)"
-  ) |> 
-  tab_header(
-    title = "Clinical Metrics by Survival Outcome and Diabetes Status"
-  ) |> 
-  data_color(
-    columns = c(median_serum_creatinine, median_serum_sodium),
-    palette = "Blues"
-  ) 
+    .mutate(
+        death_event=ibis.ifelse(heart_failure_filtered["death_event"] == 1, "Died", "Survived"),
+        diabetes=ibis.ifelse(heart_failure_filtered["diabetes"] == 1, "Yes", "No"),
+        median_serum_creatinine=heart_failure_filtered["serum_creatinine"].median().cast("float64")
+    )
+    .rename(
+        {
+            'Survival Outcome': 'death_event',
+            'Diabetes Status': 'diabetes',
+            'Median Age': 'median_age',
+            'Median Serum Creatinine (mg/dL)': 'median_serum_creatinine',
+            'Median Serum Sodium (mEq/L)': 'median_serum_sodium'
+        }
+    )
+)
+```
+
+Next, we use `GT()` and other Great Tables functions to create and style a table that displays `comparison`. Note that we need to evaluate `comparison` with `.execute()` first because `GT()` only accepts Pandas or Polars DataFrames.
+
+```python
+(
+    GT(comparison.execute())
+    .tab_header(title="Clinical Metrics by Survival Outcome and Diabetes Status")
+    .fmt_number(
+        columns=["Median Age", "Median Serum Creatinine (mg/dL)", "Median Serum Sodium (mEq/L)"],
+        decimals=1
+    )
+    .data_color(
+        columns=["Median Serum Creatinine (mg/dL)", "Median Serum Sodium (mEq/L)"],
+        palette=["white", "blue"]
+    )
+)
 ```
 
 ![](assets/gt/gt-table.png)
@@ -506,22 +522,28 @@ This way everything can travel together in a reproducible data product.
 A Quarto document can be thought of as a regular markdown document,
 but with the ability to run code chunks.
 
-You can run any of the code chunks by clicking the play button above the chunk in the RStudio Pro IDE.
+You can run any of the code chunks by clicking the `Run Cell` button above the chunk
+in VS Code.
 
 ![](assets/quarto/run-chunk.png)
 
-You can render the entire document into a polished report to share, with the `Render` button.
+When you run a cell, cell output is displayed in the Jupyter interactive console.
 
-![](assets/quarto/rstudio-render.png)
+![](assets/quarto/interactive-console.png)
 
-This will run all the code in the document from top to bottom in a new R session,
+To render and preview the entire document, click the `Preview` button (![](images/quarto-preview-icon.svg){fig-alt="Preview icon"})
+or run `quarto preview quarto.qmd` from the terminal. 
+
+![](assets/quarto/preview.png)
+
+This will run all the code in the document from top to bottom and
 and generate an HTML file, by default, for you to view and share.
 
 ### Learn More about Quarto
 
 You can learn more about Quarto here: <https://quarto.org/>,
 and the documentation for all the various Quarto outputs here: <https://quarto.org/docs/guide/>.
-Quarto works with R, Python, and Javascript Observable code out-of-the box,
+Quarto works with Python, R, and Javascript Observable code out-of-the box,
 and is a great tool to communicate your data science analyses.
 
 
@@ -532,12 +554,13 @@ One way to share our work and allow others to explore the heart failure dataset 
 interactive [Shiny](https://shiny.posit.co/) app. 
 
 We've prepared an example Shiny app in the directory:
-<https://github.com/posit-dev/snowflake-posit-quickstart-r>. Our app allows the user
+<https://github.com/posit-dev/snowflake-posit-quickstart-python>. Our app allows the user
 to explore different clinical metrics in one place.
 
 ![](assets/shiny/shiny.png)
 
-To run the app, open `app.R` and then click the Run App button at the top of the script in the RStudio Pro IDE.
+To run the app, open `app/app.py` and then click the Run Shiny App button at the 
+top of the script in VS Code.
 
 ![](assets/shiny/run.png)
 
@@ -546,35 +569,30 @@ Change the metric in the sidebar to control which metric is plotted.
 ### Learn More About Shiny
 
 You can learn more about Shiny at: <https://shiny.posit.co/>.
-This example uses Shiny for R, but
-[Shiny for Python](https://shiny.posit.co/py/)
-is also available!
 
 If you're new to Shiny, you can try it online with
-[shinylive](https://shinylive.io/r/).
-It too, comes in a [Python](https://shinylive.io/py) version.
+[shinylive](https://shinylive.io/python/). 
+Shinylive is also available for [R](https://shinylive.io/r) version.
 
 ## Conclusion and Resources
 Duration: 2
 
-R is beloved by data scientists for its intuitive, concise syntax. You can now combine this syntax with the power and peace of mind of Snowflake. The Posit Workbench Native Application provides an IDE for R _within Snowflake_. You can then use R's existing database packages---`{DBI}`, `{odbc}`, `{dbplyr}`---to access your Snowflake databases.
+Python is a powerful, versatile tool for data science, and combined with Snowflake's high-performance data capabilities, it enables robust, end-to-end data workflows. Using the Posit Workbench Native Application, you can securely work with Python _within Snowflake_ while taking advantage of tools like Ibis, Quarto, and Shiny for Python to analyze, visualize, and share your results.
 
 ### What You Learned
 
-- How to create an R session within the RStudio Pro IDE that comes with the Posit Workbench Native App.
-- How to connect to your Snowflake data from R to create tables, visualizations, and more.
-- Build an RStudio Pro IDE environment to use within Snowflake.
-- Build a Quarto document that contains plots and tables built with R, using data stored in Snowflake.
-- Build an interactive Shiny Application built with R, using data stored in Snowflake.
-
+- How to use VS Code within the Posit Workbench Native App.
+- How to connect to your Snowflake data from Python to create tables, visualizations, and more.
+- How to create a Quarto document containing plots and tables built in Python, using data stored in Snowflake.
+- How to build an interactive Shiny for Python application, working with data stored in Snowflake.
 
 ### Resources
 
-- [Source Code on GitHub](https://github.com/posit-dev/snowflake-posit-quickstart-r)
+- [Source Code on GitHub](https://github.com/posit-dev/snowflake-posit-quickstart-python)
 - [More about Posit Workbench](https://posit.co/products/enterprise/workbench/)
-- [{tidyverse} package for data science in R](https://dbplyr.tidyverse.org/)
-- [{dbplyr} package for database connections](https://dbplyr.tidyverse.org/)
-- [{gt} package for tables](https://gt.rstudio.com/)
+- [Ibis library](https://ibis-project.org/)
+- [plotnine package for plotting with a grammar of graphics in Python](https://plotnine.readthedocs.io/)
+- [Great Tables package for publication-ready tables in Python](https://posit-dev.github.io/great-tables/)
 - [Quarto for reproducible documents, reports, and data products](https://quarto.org/)
 - [Shiny for interactive dashboards and applications](https://shiny.posit.co/)
 - [Shinylive for serverless Shiny applications](https://shinylive.io/)
