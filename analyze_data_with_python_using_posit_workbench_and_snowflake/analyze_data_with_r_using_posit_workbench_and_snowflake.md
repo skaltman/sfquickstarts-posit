@@ -1,21 +1,28 @@
-author: Daniel Chen, Sara Altman
+author: Sara Altman, Daniel Chen
 id: analyze_data_with_python_using_posit_workbench_and_snowflake
-summary: Analyze Data with R using Posit Workbench and Snowflake
+summary: Analyze Data with Python using Posit Workbench and Snowflake
 categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 
+<style>
+  img {
+    width: 800px;
+    height: auto;
+  }
+</style>
+
 #  Analyze Data with Python using Posit Workbench and Snowflake
 
 ## Overview
 Duration: 1
 
-This guide will walk you through using Python to analyze data in Snowflake using the Posit
+In this guide, we'll use Python to analyze data in Snowflake using the Posit
 Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available VS Code IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 
-We'll focus on a healthcare example by analyzing heart failure data. We'll then guide you through accessing the data, and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—-completing an end-to-end analysis in Python _entirely within Snowflake_.
+We'll focus on a healthcare example by analyzing heart failure data. We'll guide you through accessing the data and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—completing an end-to-end analysis in Python _entirely within Snowflake_.
 
 ![](assets/overview/architecture.png)
 
@@ -41,7 +48,7 @@ or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-python>.
 
 ## Setup
-Duration: 3
+Duration: 15
 
 Before we begin there are a few components we need to prepare. We need to:
 
@@ -56,7 +63,10 @@ For this analysis, we'll use the [Heart Failure Clinical Records](https://archiv
 
 We'll walk through how to download the data from UCI and then upload it to Snowflake from a CSV.
 
-> **_INTERACTIVITY NOTE:_** If you have the necessary permissions in Snowflake, you can also import the data from this S3 bucket: s3://heart-failure-records/heart_failure.csv.
+<!--these asides will show up as info boxes when built as part of snowflakes site-->
+> aside positive
+> 
+> If you have the necessary permissions in Snowflake, you can also import the data from this S3 bucket: s3://heart-failure-records/heart_failure.csv.
 
 #### Step 1: Download the data as a CSV
 
@@ -66,15 +76,13 @@ Download the data from UCI [here](https://archive.ics.uci.edu/dataset/519/heart+
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), then click `Create` > `Add Data`. You can find the `Create` button in the upper-left corner. 
 
-![](assets/snowflake/02-add_data.png)
+<img src="assets/snowflake/02-add_data.png" style="width: auto; height: 300px;" />
 
 #### Step 3: Load data
 
 Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Specify an existing database or create a new one for the heart failure data (we called ours `HEART_FAILURE`). Then, select `+ Create a new table` and name it `HEART_FAILURE`.
 
-Once your find the database, you can load it into your Snowflake account by clicking the Get button on the right-hand side.
-
-![](assets/snowflake/03-load_data_into_table.png)
+<img src="assets/snowflake/03-load_data_into_table.png" style="width: auto; height: 300px;" />
 
 #### Step 4: Confirm data
 
@@ -90,7 +98,7 @@ and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, Go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html)by an administrator. 
+In your Snowflake account, Go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
 
 ![](assets/snowflake/05-get_posit_workbench.png)
 
@@ -112,28 +120,29 @@ Posit Workbench provides several IDEs, including VS Code, RStudio Pro, and Jupyt
 
 #### Step 1: New Session
 
-Within Posit Workbench, click `New Session` to launch a new session to spin up your coding environment.
+Within Posit Workbench, click `New Session` to launch a new session.
 
-![](assets/posit_workbench/01-start_new_session.png)
+<img src="assets/posit_workbench/01-start_new_session.png" style="width: 400px; height: auto;" />
 
 #### Step 2: Select an IDE
 
 When prompted, select VS Code.
 
-![](assets/posit_workbench/02-create_new_session_snowflake.png)
+<img src="assets/posit_workbench/02-create_new_session_snowflake.png" style="width: 400px; height: auto;" />
 
 #### Step 3: Log into your Snowflake account
 
 Next, connect to your Snowflake account from within Posit Workbench.
-Under `Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
+Under `Session Credentials`, click the button with the Snowflake icon to sign in to Snowflake.
 Follow the sign in prompts.
 
-![](assets/posit_workbench/03-snowflake_login.png)
+<img src="assets/posit_workbench/03-snowflake_login.png" style="width: 400px; height: auto;" />
 
 When you're successfully signed into Snowflake, the Snowflake button will turn blue
 and there will be a checkmark in the upper-left corner.
 
-![](assets/posit_workbench/04-snowflake_login_success.png)
+<img src="assets/posit_workbench/04-snowflake_login_success.png" style="width: 400px; height: auto;" />
+
 
 #### Step 4: Launch VS Code
 
@@ -144,21 +153,22 @@ you will be able to work with your Snowflake data
 in VS Code. Since the IDE is provided by the Posit Workbench Native App, 
 your entire analysis will occur securely within Snowflake.
 
-![](assets/vscode/01-vscode.png)
+![](assets/vs_code/01-vscode.png)
 
 #### Step 5: Install Quarto and Shiny Extensions
 
 The Quarto and Shiny VS Code Extensions support the development 
 of Quarto documents and Shiny apps in VS Code. The Jupyter extension provides 
-support for running Python code in notebook cell.s
+support for running Python code in notebook cells
 
-Install these extensions by:
+Install these extensions:
 
 1. **Open the VS Code Extensions view.** On the right-hand side of VS Code, click
 the Extensions icon in the Activity bar to open the Extensions view.
 2. **Search for "Quarto"** to find the Quarto extension. 
 
-![](assets/vs_code/02-extensions_quarto.png)
+<img src="assets/vs_code/02-extensions_quarto.png" style="width: 200px; height: auto;" />
+
 
 3. **Install the Quarto extension.** Click on the Quarto extension, then click `Install`.
 4. **Install the Shiny extension.** Search for the Shiny extension, then install 
@@ -172,43 +182,49 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 #### Step 6: Access the Quickstart Materials
 
 This Quickstart will step you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, clone the GitHub repo by:
+To follow along, clone the GitHub repo:
 
-    1.  Click `Clone Repository`.
+  1. Once the session opens, click `Clone Git Repository`.
+  
+  ![](assets/vs_code/03-clone_repository.png)
 
-    ![](assets/rstudio/03-new-project.png)
+  2.  Paste the URL (https://github.com/posit-dev/snowflake-posit-quickstart-python/)
+  of the GitHub repo into the Command Palette.
+  
+  3. Click `Clone from URL`.
 
-    2.  Paste the [URL](https://github.com/posit-dev/snowflake-posit-quickstart-python/)
-    of the GitHub URL into the Command Palette.
-    
-    3. Click `Clone from URL`.
+  ![](assets/vs_code/04-clone_from_url.png)
 
-    ![](assets/vscode/04-clone_from_url.png)
+  3. Choose a folder to clone the repo into.
+  
+  <img src="assets/vs_code/05-choose_folder.png" style="width: 400px; height: auto;" />
 
-    3. Choose a folder to clone the repo into.
+  4. Follow the prompts to authenticate to GitHub.
+  
+  5. When prompted, click `Open` to open the cloned repository.
+  
+  <img src="assets/vs_code/06-open.png" style="width: 400px; height: auto;" />
 
-    ![](assets/vscode/05-choose_folder.png)
-    
-    4. Follow the prompts to authenticate to GitHub.
-    
-    5. When prompted, click `Open` to open the cloned repository.
-    
-    ![](assets/vscode/06-open.png)
-    
-    6. Open `quarto.qmd`.
-    
+  
+  6. Open `quarto.qmd`. 
+  
 ### Create a virtual environment
 
-Create a virtual environment and install dependencies from `requirements.txt`.
-See [Creating Environments](https://code.visualstudio.com/docs/python/environments#_creating-environments) 
-for more details. 
+Create a virtual environment and install dependencies from the provided `requirements.txt` file:
 
-<!-- fill in steps -->
+1. Open the Command Palette (`Ctrl/Cmd+Shift+P`), then search for "Python: Create Environment".
+2. Select `Venv` to create a `.venv` virtual environment. 
+3. Select a Python version to use for the environment.
+4. When prompted to select dependencies to install, select `requirements.txt`. If you don’t see this prompt, open a terminal and run `pip install -r requirements.txt` after the environment is created.
+5. Click `OK`. VS Code will install the required packages and create a virtual environment in your current working directory.
+
+See the [Python Environments in VS Code](https://docs.posit.co/ide/server-pro/user/vs-code/guide/python-environments.html) section of the Posit Workbench User Guide to learn more about Python environments in Posit Workbench. 
+
 
 ## Access Snowflake data from Python
 Duration: 5
 
-We will run our code in our Python environment, but the code will use data stored in our database on Snowflake.
+We'll run our code in our Python environment, but the code will use data stored in our database on Snowflake.
 
 To access this data, we'll use the Ibis library to connect to the database and
 querty the data from Python, without having to write raw SQL. 
@@ -219,7 +235,7 @@ Let's take a look at how this works.
 [Ibis](https://ibis-project.org/) is an open source dataframe library that works with a wide variety of backends, 
 including Snowflake.
 
-Import `ibis`, then use `ibis.snowflake.connect` to connect to our Snowflake 
+First, we import `ibis`, then use `ibis.snowflake.connect` to connect to the Snowflake 
 database. We need to provide a `warehouse` for compute and a `database` to connect to.
 We can also provide a `schema` here to make connecting to specific tables easier.
 
@@ -234,14 +250,16 @@ con = ibis.snowflake.connect(
 )
 ```
 
-> **_INTERACTIVITY NOTE:_** Your `warehouse`, `database`, `catalog` values may differ,
+> aside positive
+> 
+> Your `warehouse`, `database`, `catalog` values may differ,
 depending on your available warehouses and how you named your database.  
 
 The variable `con` now stores our connection. 
 
 ### Create a table that corresponds to a table in the database
 
-Once we build a connection, we can use `table()` to create a [table](https://ibis-project.org/reference/expression-tables#:~:text=A%20table%20expression%20contains%20an,new%20Table%20with%20those%20changes) that represents the database table.
+Once we build a connection, we can use `table()` to create an Ibis [table expression](https://ibis-project.org/reference/expression-tables#:~:text=A%20table%20expression%20contains%20an,new%20Table%20with%20those%20changes) that represents the database table.
 
 ```python
 heart_failure = con.table("HEART_FAILURE")
@@ -254,7 +272,7 @@ we can filter rows and select columns from our data.
 
 ```python
 heart_failure_filtered = (
-    heart_failure.filter(heart_failure.AGE < 50)  # Filter to age < 50
+    heart_failure.filter(heart_failure.AGE < 50)  
     .rename(
         {
             "age": "AGE",
@@ -271,12 +289,12 @@ heart_failure_filtered = (
 )
 ```
 
-Right now, `heart_failure_filtered` is what Ibis calls a [table expression](https://ibis-project.org/reference/expression-tables). 
+Right now, `heart_failure_filtered` is still a [table expression](https://ibis-project.org/reference/expression-tables). 
 Ibis lazily evaluates commands, which means that the full query is never run on 
 the database unless explicitly requested.
 
-You can force Ibis to compile the table expression into SQL and run that SQL on
-Snowflake with `.execute()` or `.to_pandas()`. 
+Use `.execute()` or `.to_pandas()` to force Ibis to compile the table expression
+into SQL and run that SQL on Snowflake. 
 
 ```python
 heart_failure_filtered.execute()
@@ -305,14 +323,16 @@ WHERE
 
 This system:
 
-1. Keeps our data in the database, saving memory in the Python session
-2. Pushes computations to the database, saving compute in the Python session
-3. Evaluates queries lazily, saving compute in the database
+1. Keeps our data in the database, saving memory in the Python session.
+2. Pushes computations to the database, saving compute in the Python session.
+3. Evaluates queries lazily, saving compute in the database.
 
 We don't need to manage the process, it happens automatically behind the scenes.
 
-Learn more about Ibis at [https://ibis-project.org/](https://ibis-project.org/). 
-You can learn more about the Snowflake backend specifically at [https://ibis-project.org/backends/snowflake](https://ibis-project.org/backends/snowflake).
+You can learn more about Ibis [here](https://ibis-project.org/). Take a look at the 
+[Snowflake backend documentation](https://ibis-project.org/backends/snowflake) to
+learn more about using Ibis to interact with 
+Snowflake specifically. 
 
 ## Write to a Snowflake database
 Duration: 1
@@ -353,7 +373,7 @@ heart_failure = heart_failure.rename(
 
 ### Filter ages
 
-For now, we'll focus on just patients younger than 50. We also reduce the data to just the columns we're interested in.
+For now, we'll focus on patients younger than 50. We also reduce the data to just the columns we're interested in.
 
 ```python
 heart_failure_filtered = (
@@ -363,36 +383,18 @@ heart_failure_filtered = (
 )
 ```
 
-Our table now looks like this.
-
-┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━┓
-┃ age            ┃ diabetes ┃ serum_sodium ┃ serum_creatinine ┃ sex   ┃ death_event ┃
-┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━┩
-│ decimal(38, 3) │ int64    │ int64        │ decimal(38, 2)   │ int64 │ int64       │
-├────────────────┼──────────┼──────────────┼──────────────────┼───────┼─────────────┤
-│         45.000 │        0 │          137 │             1.10 │     1 │           1 │
-│         49.000 │        0 │          138 │             1.00 │     0 │           0 │
-│         45.000 │        0 │          127 │             0.80 │     1 │           1 │
-│         48.000 │        1 │          121 │             1.90 │     0 │           1 │
-│         49.000 │        0 │          136 │             1.10 │     1 │           1 │
-│         45.000 │        1 │          139 │             1.00 │     1 │           1 │
-│         45.000 │        0 │          145 │             1.00 │     1 │           1 │
-│         45.000 │        0 │          137 │             1.18 │     0 │           0 │
-│         42.000 │        1 │          136 │             1.30 │     0 │           1 │
-│         41.000 │        0 │          140 │             0.80 │     1 │           0 │
-│              … │        … │            … │                … │     … │           … │
-└────────────────┴──────────┴──────────────┴──────────────────┴───────┴─────────────┘
-
-> **_INTERACTIVITY NOTE:_** By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. [In interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`. 
+> aside positive
+> 
+> By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. In [interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`. 
 
 ## Visualize Data with `plotnine`
 Duration: 5
 
 The heart failure data provides important insights that can help us:
 
-- Identify factors associated with increased risk of mortality after heart failure
-- Predict future survival outcomes based on historical clinical data
-- Benchmark patient outcomes based on clinical indicators like serum sodium levels
+- Identify factors associated with increased risk of mortality after heart failure.
+- Predict future survival outcomes based on historical clinical data.
+- Benchmark patient outcomes based on clinical indicators like serum sodium levels.
 
 Visualizing clinical variables across different patient groups can help identify patterns.
 
@@ -401,14 +403,16 @@ Visualizing clinical variables across different patient groups can help identify
 We can use [plotnine](https://plotnine.org/) to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
 
 ```r
-heart_failure_df = heart_failure_filtered.execute()
-
-# Convert columns to strings for plot
-heart_failure_df['death_event'] = heart_failure_df['death_event'].astype(str)
-heart_failure_df['diabetes'] = heart_failure_df['diabetes'].astype(str)
+heart_failure_plot = (
+    heart_failure_filtered
+    .mutate(
+        death_event=heart_failure_filtered["death_event"].cast("string"),
+        diabetes=heart_failure_filtered["diabetes"].cast("string")
+    )
+)
 
 (
-    ggplot(heart_failure_df, aes(x='death_event', y='serum_sodium', color='diabetes')) +
+    ggplot(heart_failure_plot, aes(x='death_event', y='serum_sodium', color='diabetes')) +
     geom_boxplot() +
     labs(
         title="Serum Sodium Levels by Diabetes Status and Survival Outcome",
@@ -422,12 +426,10 @@ heart_failure_df['diabetes'] = heart_failure_df['diabetes'].astype(str)
 
 ![](assets/analysis/plot-sodium.png)
 
-> **_INTERACTIVITY NOTE:_**  We first run `.execute()` to force the table expression to execute. This makes it easier to change the column types in preparation for plotting. We don't need to worry about unecessarily or prematurely executign the code because the plot code would fully evaluate the table expression anyways. 
-
 ## Make publication-ready tables with Great Tables
 Duration: 5
 
-We can continue exploring the heart failure dataset with visualizations or create a table that concisely displays multiple pieces of information at once. For example, we can use Ibis to calculate the median values for various clinical metrics across different patient groups.
+Next, we'll use Ibis to calculate the median values for various clinical metrics across different patient groups.
 
 ```python
 (
@@ -441,20 +443,9 @@ We can continue exploring the heart failure dataset with visualizations or creat
 )
 ```
 
-┏━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
-┃ death_event ┃ diabetes ┃ median_age     ┃ median_serum_creatinine ┃ median_serum_sodium ┃
-┡━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
-│ int64       │ int64    │ decimal(38, 3) │ decimal(38, 2)          │ float64             │
-├─────────────┼──────────┼────────────────┼─────────────────────────┼─────────────────────┤
-│           1 │        1 │         45.500 │                    1.45 │               133.0 │
-│           0 │        1 │         45.000 │                    0.90 │               137.0 │
-│           1 │        0 │         45.000 │                    1.10 │               136.0 │
-│           0 │        0 │         42.000 │                    1.00 │               139.0 │
-└─────────────┴──────────┴────────────────┴─────────────────────────┴─────────────────────┘
-
 This is a useful way to examine the information for ourselves. However, if we wish to share the information with others, we might prefer to present the table in a more polished format. We can do this with the [Great Tables](https://posit-dev.github.io/great-tables/articles/intro.html) package.
 
-The following code prepares a table named `comparison` that we'll display with Great Tables. 
+The following code prepares a table named `comparison`, which we'll display with Great Tables. 
 
 ```python
 comparison = (
@@ -525,13 +516,13 @@ but with the ability to run code chunks.
 You can run any of the code chunks by clicking the `Run Cell` button above the chunk
 in VS Code.
 
-![](assets/quarto/run-chunk.png)
+<img src="assets/quarto/run-chunk.png" style="width: 400px; height: auto;" />
 
 When you run a cell, cell output is displayed in the Jupyter interactive console.
 
 ![](assets/quarto/interactive-console.png)
 
-To render and preview the entire document, click the `Preview` button (![](images/quarto-preview-icon.svg){fig-alt="Preview icon"})
+To render and preview the entire document, click the `Preview` button
 or run `quarto preview quarto.qmd` from the terminal. 
 
 ![](assets/quarto/preview.png)
@@ -553,18 +544,18 @@ Duration: 2
 One way to share our work and allow others to explore the heart failure dataset is to create an
 interactive [Shiny](https://shiny.posit.co/) app. 
 
-We've prepared an example Shiny app in the directory:
-<https://github.com/posit-dev/snowflake-posit-quickstart-python>. Our app allows the user
+Our GitHub repository contains an [example Shiny app](https://github.com/posit-dev/snowflake-posit-quickstart-python/tree/main/app).
+This app allows the user
 to explore different clinical metrics in one place.
 
 ![](assets/shiny/shiny.png)
 
-To run the app, open `app/app.py` and then click the Run Shiny App button at the 
+To run the app, open `app/app.py` and then click the `Run Shiny App` button at the 
 top of the script in VS Code.
 
 ![](assets/shiny/run.png)
 
-Change the metric in the sidebar to control which metric is plotted.
+After launching the app, use the sidebar to change the metric displayed.
 
 ### Learn More About Shiny
 
@@ -590,7 +581,7 @@ Python is a powerful, versatile tool for data science, and combined with Snowfla
 
 - [Source Code on GitHub](https://github.com/posit-dev/snowflake-posit-quickstart-python)
 - [More about Posit Workbench](https://posit.co/products/enterprise/workbench/)
-- [Ibis library](https://ibis-project.org/)
+- [Ibis library website](https://ibis-project.org/)
 - [plotnine package for plotting with a grammar of graphics in Python](https://plotnine.readthedocs.io/)
 - [Great Tables package for publication-ready tables in Python](https://posit-dev.github.io/great-tables/)
 - [Quarto for reproducible documents, reports, and data products](https://quarto.org/)
