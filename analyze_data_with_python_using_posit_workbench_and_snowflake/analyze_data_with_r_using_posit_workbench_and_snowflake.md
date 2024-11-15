@@ -98,7 +98,7 @@ and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, Go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
+In your Snowflake account, go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
 
 ![](assets/snowflake/05-get_posit_workbench.png)
 
@@ -138,8 +138,8 @@ Follow the sign in prompts.
 
 <img src="assets/posit_workbench/03-snowflake_login.png" style="width: 400px; height: auto;" />
 
-When you're successfully signed into Snowflake, the Snowflake button will turn blue
-and there will be a checkmark in the upper-left corner.
+When you're successfully signed in to Snowflake, the Snowflake button will turn blue
+and there will be a check mark in the upper-left corner.
 
 <img src="assets/posit_workbench/04-snowflake_login_success.png" style="width: 400px; height: auto;" />
 
@@ -148,8 +148,7 @@ and there will be a checkmark in the upper-left corner.
 
 Click `Start Session` to launch VS Code.
 
-Once everything is ready,
-you will be able to work with your Snowflake data
+You will now be able to work with your Snowflake data
 in VS Code. Since the IDE is provided by the Posit Workbench Native App, 
 your entire analysis will occur securely within Snowflake.
 
@@ -206,7 +205,7 @@ To follow along, clone the GitHub repo:
   <img src="assets/vs_code/06-open.png" style="width: 400px; height: auto;" />
 
   
-  6. Open `quarto.qmd`. 
+  6. Open `quarto.qmd` to follow along with this Quickstart. 
   
 ### Create a virtual environment
 
@@ -220,14 +219,57 @@ Create a virtual environment and install dependencies from the provided `require
 
 See the [Python Environments in VS Code](https://docs.posit.co/ide/server-pro/user/vs-code/guide/python-environments.html) section of the Posit Workbench User Guide to learn more about Python environments in Posit Workbench. 
 
+## Build Reports and Dashboards with Quarto
+Duration: 2
+
+Before we dive into the specifics of the code, let's first discuss Quarto. We've written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
+is an open-source publishing system that makes it easy to create
+[data products](https://quarto.org/docs/guide/) such as
+[documents](https://quarto.org/docs/output-formats/html-basics.html),
+[presentations](https://quarto.org/docs/presentations/),
+[dashboards](https://quarto.org/docs/dashboards/),
+[websites](https://quarto.org/docs/websites/),
+and
+[books](https://quarto.org/docs/books/).
+
+By placing our work in a Quarto document, we've interwoven all of our code, results, output, and prose text into a single literate programming document.
+This way everything can travel together in a reproducible data product.
+
+A Quarto document can be thought of as a regular markdown document,
+but with the ability to run code chunks.
+
+You can run any of the code chunks by clicking the `Run Cell` button above the chunk
+in VS Code.
+
+<img src="assets/quarto/run-chunk.png" style="width: 400px; height: auto;" />
+
+When you run a cell, cell output is displayed in the Jupyter interactive console.
+
+![](assets/quarto/interactive-console.png)
+
+To render and preview the entire document, click the `Preview` button
+or run `quarto preview quarto.qmd` from the terminal. 
+
+![](assets/quarto/preview.png)
+
+This will run all the code in the document from top to bottom and
+and generate an HTML file, by default, for you to view and share.
+
+### Learn More about Quarto
+
+You can learn more about Quarto here: <https://quarto.org/>,
+and the documentation for all the various Quarto outputs here: <https://quarto.org/docs/guide/>.
+Quarto works with Python, R, and Javascript Observable code out-of-the box,
+and is a great tool to communicate your data science analyses.
 
 ## Access Snowflake data from Python
 Duration: 5
 
-We'll run our code in our Python environment, but the code will use data stored in our database on Snowflake.
+Now, let's take a closer look at the code in our Quarto document. Our code will run
+in our Python environment, but will use data stored in our database on Snowflake.
 
 To access this data, we'll use the Ibis library to connect to the database and
-querty the data from Python, without having to write raw SQL. 
+query the data from Python, without having to write raw SQL. 
 Let's take a look at how this works.
 
 ### Connect with Ibis
@@ -250,12 +292,12 @@ con = ibis.snowflake.connect(
 )
 ```
 
-> aside positive
-> 
-> Your `warehouse`, `database`, `catalog` values may differ,
-depending on your available warehouses and how you named your database.  
-
 The variable `con` now stores our connection. 
+
+> aside negative
+> 
+> You may need to change  `warehouse`, `database`, and `catalog` to reflect your
+available warehouses and database name. 
 
 ### Create a table that corresponds to a table in the database
 
@@ -268,7 +310,7 @@ heart_failure = con.table("HEART_FAILURE")
 ### Rely on Ibis to translate Python to SQL
 
 We can now use Ibis to interact with `heart_failure`. For example, 
-we can filter rows and select columns from our data.
+we can filter rows and rename and select columns.
 
 ```python
 heart_failure_filtered = (
@@ -412,7 +454,7 @@ heart_failure_plot = (
 )
 
 (
-    ggplot(heart_failure_plot, aes(x='death_event', y='serum_sodium', color='diabetes')) +
+    ggplot(heart_failure_plot, aes(x="death_event", y="serum_sodium", color="diabetes")) +
     geom_boxplot() +
     labs(
         title="Serum Sodium Levels by Diabetes Status and Survival Outcome",
@@ -420,7 +462,7 @@ heart_failure_plot = (
         y="Serum Sodium (mEq/L)",
         color="Diabetes"
     ) +
-    theme(legend_position='bottom')
+    theme(legend_position="bottom")
 )
 ```
 
@@ -463,11 +505,11 @@ comparison = (
     )
     .rename(
         {
-            'Survival Outcome': 'death_event',
-            'Diabetes Status': 'diabetes',
-            'Median Age': 'median_age',
-            'Median Serum Creatinine (mg/dL)': 'median_serum_creatinine',
-            'Median Serum Sodium (mEq/L)': 'median_serum_sodium'
+            "Survival Outcome": "death_event",
+            "Diabetes Status": "diabetes",
+            "Median Age": "median_age",
+            "Median Serum Creatinine (mg/dL)": "median_serum_creatinine",
+            "Median Serum Sodium (mEq/L)": "median_serum_sodium"
         }
     )
 )
@@ -492,56 +534,11 @@ Next, we use `GT()` and other Great Tables functions to create and style a table
 
 ![](assets/gt/gt-table.png)
 
-Now that we've accumulated some insights, let's think about how we might present the results of our analysis to our colleagues.
-
-## Build Reports and Dashboards with Quarto
-Duration: 2
-
-We've conveniently written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
-is an open-source publishing system that makes it easy to create
-[data products](https://quarto.org/docs/guide/) such as
-[documents](https://quarto.org/docs/output-formats/html-basics.html),
-[presentations](https://quarto.org/docs/presentations/),
-[dashboards](https://quarto.org/docs/dashboards/),
-[websites](https://quarto.org/docs/websites/),
-and
-[books](https://quarto.org/docs/books/).
-
-By placing our work in a Quarto document, we have interwoven all of our code, results, output, and prose text into a single literate programming document.
-This way everything can travel together in a reproducible data product.
-
-A Quarto document can be thought of as a regular markdown document,
-but with the ability to run code chunks.
-
-You can run any of the code chunks by clicking the `Run Cell` button above the chunk
-in VS Code.
-
-<img src="assets/quarto/run-chunk.png" style="width: 400px; height: auto;" />
-
-When you run a cell, cell output is displayed in the Jupyter interactive console.
-
-![](assets/quarto/interactive-console.png)
-
-To render and preview the entire document, click the `Preview` button
-or run `quarto preview quarto.qmd` from the terminal. 
-
-![](assets/quarto/preview.png)
-
-This will run all the code in the document from top to bottom and
-and generate an HTML file, by default, for you to view and share.
-
-### Learn More about Quarto
-
-You can learn more about Quarto here: <https://quarto.org/>,
-and the documentation for all the various Quarto outputs here: <https://quarto.org/docs/guide/>.
-Quarto works with Python, R, and Javascript Observable code out-of-the box,
-and is a great tool to communicate your data science analyses.
-
-
 ## Shiny Application
 Duration: 2
 
-One way to share our work and allow others to explore the heart failure dataset is to create an
+Earlier, we showed you how to render a report from our Quarto document. Another way 
+to share our work and allow others to explore the heart failure dataset is to create an
 interactive [Shiny](https://shiny.posit.co/) app. 
 
 Our GitHub repository contains an [example Shiny app](https://github.com/posit-dev/snowflake-posit-quickstart-python/tree/main/app).
