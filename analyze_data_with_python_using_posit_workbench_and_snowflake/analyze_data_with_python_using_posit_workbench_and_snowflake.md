@@ -445,6 +445,8 @@ Visualizing clinical variables across different patient groups can help identify
 We can use [plotnine](https://plotnine.org/) to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
 
 ```r
+from plotnine import ggplot, aes, geom_boxplot, labs, theme
+
 heart_failure_plot = (
     heart_failure_filtered
     .mutate(
@@ -518,6 +520,8 @@ comparison = (
 Next, we use `GT()` and other Great Tables functions to create and style a table that displays `comparison`. Note that we need to evaluate `comparison` with `.execute()` first because `GT()` only accepts Pandas or Polars DataFrames.
 
 ```python
+from great_tables import GT
+
 (
     GT(comparison.execute())
     .tab_header(title="Clinical Metrics by Survival Outcome and Diabetes Status")
