@@ -19,8 +19,7 @@ using the [orbital R package](https://orbital.tidymodels.org/) and the [Snowflak
 
 With the orbital package, you can:
 
-1. Speed up model prediction by running model predictions in a database 
-like Snowflake.
+1. Speed up model predictions by running them directly in a database like Snowflake.
 2. Easily share your models with others by storing predictions in a Snowflake table or view. 
 
 We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an 
@@ -59,14 +58,14 @@ Duration: 5
 
 Before we begin there are a few components we need to prepare. We need to:
 
-- Add the lending club data to Snowflake
+- Add the Lending Club data to Snowflake
 - Launch the Posit Workbench Native App
 - Create an RStudio Pro IDE session
 - Install necessary R Packages
 
-### Add the lending club data to Snowflake
+### Add the Lending Club data to Snowflake
 
-For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an S3 bucket.
+For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an [S3 bucket](s3://posit-snowflake-mlops).
 
 The data contains information for about 2.3 million loans from Southern US states.
 
@@ -83,11 +82,10 @@ this Quickstart.
 
 #### Confirm data
 
-After running the code, you should be able to see the lending club data in Snowsight.
+After running the code, you should be able to see the Lending Club data in Snowsight.
 
-Navigate to `Data` > `Databases`, then select the database to which you added
-the data (e.g., `LENDING_CLUB`). Expand the database, schema, and tables
-until you see the `LOAN_DATA` table. 
+Navigate to `Data` > `Databases` and select the database where you added the data (e.g., `LENDING_CLUB`).
+Expand the database, schema, and tables until you see the `LOAN_DATA` table. 
 
 ![](assets/snowflake/04-confirm_data.png)
 
@@ -114,7 +112,7 @@ After clicking on the app, you will see a page with configuration instructions a
 
 ![](assets/snowflake/09-launch-app.png)
 
-Click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
+Click on `Launch app` to launch the app. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
 ### Create an RStudio Pro Session 
 
@@ -152,7 +150,7 @@ Click `Start Session` to launch the RStudio Pro IDE.
 Once everything is ready,
 you will be able to work with your Snowflake data
 in the familiar RStudio Pro IDE. Since the IDE is provided by the Posit Workbench Native App, 
-your entire analysis will occur securely within Snowflake.
+your entire analysis will run securely within Snowflake.
 
 ![](assets/rstudio/01-rstudio.png)
 
@@ -189,8 +187,8 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 
 ### Install R Packages
 
-Now that we're in a familiar R environment,
-we need to install the packages we'll need. We'll use the [tidymodels](https://www.tidyverse.org/) ecosystem of packages, as well as a few others.
+Now that we're in a familiar R environment, we need to install the necessary packages.
+We'll use the [tidymodels](https://www.tidyverse.org/) ecosystem of packages, as well as a few others.
 
 ```r
 install.packages(
@@ -257,12 +255,11 @@ con <- dbConnect(
 
 > aside negative
 >
-> You may need to change `warehouse`, `database`, and `schema` to match your own
-> warehouse, database, and schema names. 
+> You may need to change `warehouse`, `database`, and `schema` to match your environment.
 
 `con` now stores our connection. 
 
-Once we build a connection, we can see the databases, schemas, and tables available to us in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click on the table icon to the right of a table to see a preview of the table.
+Once connected, we can view available databases, schemas, and tables in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click the table icon to preview the table.
 
 <img src="assets/rstudio/02-connections.png" style="width: 400px; height: auto;" />
 
@@ -306,7 +303,7 @@ lendingclub_dat <-
 ```
 
 We don't want to fit our model on all 2.3 million rows, so we'll filter to a single
-year and then sample 5000 rows. 
+year and then sample 5,000 rows. 
 
 ```r
 lendingclub_sample <- 
@@ -455,8 +452,8 @@ board <- board_connect()
 
 > aside negative
 >
-> To run `rsconnect::board_connect()`, you'll first need to authenticate. The 
-> easiest way to authenticate is by navigating to `Tools` > `Global Options` > `Publishing` > `Connect`, and then following the instructions.
+> To run `rsconnect::board_connect()`, you'll first need to authenticate. To authenticate,
+> navigate to `Tools` > `Global Options` > `Publishing` > `Connect` and follow the instructions.
 
 Then, we create a vetiver model with `vetiver_model()`, supplying the function with our 
 fitted model, model name, and metadata containing our metrics. 
@@ -508,7 +505,7 @@ model_version <-
 
 At this point, we've:
 
-1. Fitted a model
+1. Fit a model
 2. Evaluated that model
 3. Versioned the model with vetiver
 
@@ -520,7 +517,7 @@ Duration: 10
 The orbital package allows you to run tidymodels workflow predictions inside 
 databases, including Snowflake, substantially speeding up the prediction process. 
 
-To do so, orbital converts the tidymodels workflow to SQL that can be run on Snowflake. 
+To do so, orbital converts tidymodels workflows into SQL that can run on Snowflake.
 You can then either use that SQL to run the predictions of that model or deploy the
 model directly to Snowflake. 
 
@@ -570,8 +567,8 @@ Notice that you can see all the pre-processing steps and model prediction steps.
 Now that we've converted our tidymodels workflow object to SQL with orbital, we can 
 run model predictions inside Snowflake. 
 
-When you call `predict()` with an orbital object like `orbital_obj`, orbital will
-automatically execute the SQL code we saw above inside Snowflake. 
+Calling `predict()` with our orbital object will run the SQL code we saw above directly
+in Snowflake. 
 
 ```r
 start_time <- Sys.time()
@@ -605,9 +602,8 @@ preds
 
 > aside positive
 >
-> We've also used `dplyr::compute()` to force computation
-of the query---without `compute()`, `predict()` would only be evaluated lazily. `compute()` 
-saves the results to a temporary table. 
+> We've also used `dplyr::compute()` to force the query to compute—without `compute()`,
+> `predict()` would only be evaluated lazily. `compute()` saves the results to a temporary table. 
 > The `Sys.time()` calls will help us determine how fast orbital computed our predictions.
 
 To figure out how much orbital sped up our process, let's see how many predictions
@@ -635,12 +631,12 @@ end_time - start_time
 Time difference of 3.027164 secs
 ```
 
-2,260,702 predictions in just 3.02 seconds---thanks to Snowflake and orbital!
+2,260,702 predictions in just 3.02 seconds—thanks to Snowflake and orbital!
 
 ## Deploy model as a Snowflake view
 Duration: 5
 
-Now, we want to deploy our model so that others can use it. We have a couple of options.
+Next, we'll deploy our model so others can use it. We have a couple of options.
 
 One option is to write the predictions back to Snowflake as a permanent table by
 setting `temporary = FALSE` in `compute()`:
