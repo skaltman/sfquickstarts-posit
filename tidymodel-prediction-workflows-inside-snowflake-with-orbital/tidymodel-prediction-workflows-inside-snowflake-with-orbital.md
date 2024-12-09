@@ -1123,6 +1123,8 @@ We can refit periodically, monitor performance, and store the best-performing
 version on Posit Connect. We won't cover this in detail here,
 but we've put together sample code for the process in [this Quarto document](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/refit.qmd).
 
+[This blog post](https://posit.co/blog/running-tidymodel-prediction-workflows-inside-databases/) also covers the process.
+
 ## Conclusion and Resources
 Duration: 2
 
