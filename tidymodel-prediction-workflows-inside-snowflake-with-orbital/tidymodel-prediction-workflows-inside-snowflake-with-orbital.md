@@ -26,13 +26,15 @@ like Snowflake.
 We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an 
 example model in this Quickstart. 
 
-![](assets/overview/architecture.png)
-
 ### What You'll Need
 
 - Familiarity with R
 - Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/) 
 - The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
+- A Snowflake account with an ACCOUNTADMIN role or role that allows you to:
+  - Create databases, schemas and tables
+  - Create stages
+  - Load data from S3
 
 ### What You’ll Learn
 
