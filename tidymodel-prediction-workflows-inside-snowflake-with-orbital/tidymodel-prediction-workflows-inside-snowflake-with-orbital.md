@@ -21,7 +21,7 @@ With the orbital package, you can:
 
 1. Speed up model prediction by running model predictions in a database 
 like Snowflake.
-2. Easily share your models with others by storing predictions in a table or view. 
+2. Easily share your models with others by storing predictions in a Snowflake table or view. 
 
 We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an 
 example model in this Quickstart. 
@@ -31,14 +31,14 @@ example model in this Quickstart.
 - Familiarity with R
 - Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/) 
 - The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
-- A Snowflake account with an ACCOUNTADMIN role or role that allows you to:
+- A Snowflake account with an `accountadmin` role or role that allows you to:
   - Create databases, schemas and tables
   - Create stages
   - Load data from S3
 
 ### What You’ll Learn
 
-- How to create a tidymodels workflow that bundles preprocessing, modeling, and post-processing steps. 
+- How to create a tidymodels workflow that bundles pre-processing, modeling, and post-processing steps. 
 - How to transform that workflow into Snowflake SQL with orbital. 
 - How to run model predictions on Snowflake using orbital. 
 - How to create Snowflake views to store and share model predictions. 
@@ -66,27 +66,35 @@ Before we begin there are a few components we need to prepare. We need to:
 
 ### Add the lending club data to Snowflake
 
-For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in this S3 bucket, but you can also download the data from [Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club).
+For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an S3 bucket.
 
 The data contains information for about 2.3 million loans from Southern US states.
 
 #### Add data
 
-<!--TO DO -->
+In Snowsight, click `Create` > `SQL Worksheet`. Copy [this SQL code](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/setup.sql) and paste it
+into the worksheet. Run the code to create the database and table you'll need for
+this Quickstart.
+
+> aside negative
+>
+> You may need to change the role granted usage from `SYSADMIN` to your desired
+> role.
 
 #### Confirm data
 
-You should now be able to see the lending club data in Snowsight. Navigate to `Data` > `Databases`, then select the database to which you added the data (e.g., `LENDING_CLUB`). Expand the database, schema, and tables until you see the `LOAN_DATA` table. 
+After running the code, you should be able to see the lending club data in Snowsight.
+
+Navigate to `Data` > `Databases`, then select the database to which you added
+the data (e.g., `LENDING_CLUB`). Expand the database, schema, and tables
+until you see the `LOAN_DATA` table. 
 
 ![](assets/snowflake/04-confirm_data.png)
 
 ### Launch Posit Workbench
 
-We can now start the modeling process with the data using Posit Workbench.
-You can find Posit Workbench as a Snowflake Native Application
-and use it to connect to your database.
-
-The [Posit Workbench Native App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc) allows users to develop in their preferred IDE in 
+We can now start the modeling process with the data using the [Posit Workbench Native App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc). 
+The Posit Workbench Native App allows users to develop in their preferred IDE in 
 Posit Workbench with their Snowflake data, all while adhering to Snowflake's 
 security and governance protocols.
 
@@ -98,7 +106,7 @@ In your Snowflake account, go to `Data Products` > `Apps` to open the Native App
 
 #### Step 2: Open the Posit Workbench Native App
 
-Once Posit Workbench is installed, click on the app under `Installed Apps` to launch the app. If you do not see the Posit Workbench app listed, ask your Snowflake account administrator for access to the app.
+Once Posit Workbench is installed, click on the app under `Installed Apps`. If you do not see the Posit Workbench app listed, ask your Snowflake account administrator for access to the app.
 
 ![](assets/snowflake/06-open_app.png)
 
@@ -110,7 +118,7 @@ Click on `Launch app`. This should take you to the webpage generated for the Wor
 
 ### Create an RStudio Pro Session 
 
-Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS Code. For this analysis we will use an RStudio Pro IDE.
+Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS Code. For this Quickstart, we will use RStudio Pro.
 
 #### Step 1: New Session
 
@@ -156,21 +164,21 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 1. **Simple copy-and-paste** Go to File > New File > R Script and then copy the contents of [fit_and_deploy.R](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/fit_and_deploy.R) into your new file.
 2. **Starting a new project linked to the GitHub repo.** To do this:
 
-    1.  Go to File > New Project in the RStudio IDE menu bar.
-
-    ![](assets/rstudio/03-new-project.png)
+    1.  Go to `File` > `New Project` in the RStudio IDE menu bar.
+    
+    <img src="assets/rstudio/03-new-project.png" style="width: 400px; height: auto;" />
 
     2.  Select Version Control in the New Project Wizard
 
-    ![](assets/rstudio/04-project-wizard.png)
+    <img src="assets/rstudio/04-project-wizard.png" style="width: 400px; height: auto;" />
 
     3.  Select Git
 
-    ![](assets/rstudio/05-git.png)
+    <img src="assets/rstudio/05-git.png" style="width: 400px; height: auto;" />
 
     4.  Paste the [URL](https://github.com/posit-dev/snowflake-posit-quickstart-orbital) of the GitHub repo and click Create Project
 
-    ![](assets/rstudio/06-create-project.png)
+    <img src="assets/rstudio/06-create-project.png" style="width: 400px; height: auto;" />
 
     RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
 
@@ -182,7 +190,7 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 ### Install R Packages
 
 Now that we're in a familiar R environment,
-we need to prepare the packages we will use. We'll use the [tidymodels](https://www.tidyverse.org/) ecosystem of packages, as well as a few others.
+we need to install the packages we'll need. We'll use the [tidymodels](https://www.tidyverse.org/) ecosystem of packages, as well as a few others.
 
 ```r
 install.packages(
@@ -267,7 +275,7 @@ Once we build a connection, we can use `dplyr::tbl()` to create `tbl`s. A tbl is
 con |> tbl("LOAN_DATA")
 ```
 
-We can also use `dbplyr` to translate typical `dplyr` verbs into SQL. To prepare our
+We can also use dbplyr to translate typical dplyr verbs into SQL. To prepare our
 `tbl` for modeling, we'll extract the year and month information from the `ISSUE_D`
 column.
 
@@ -297,8 +305,8 @@ lendingclub_dat <-
   )
 ```
 
-We don't want to fit our model on all 2.3 million rows, so we'll filter to only one 
-year of interest (2016) and then sample 5000 rows. 
+We don't want to fit our model on all 2.3 million rows, so we'll filter to a single
+year and then sample 5000 rows. 
 
 ```r
 lendingclub_sample <- 
@@ -332,9 +340,9 @@ Duration: 10
 
 ### Create a workflow
 
-Next, we'll create a tidymodels workflow. Workflows bundle preprocessing, modeling, nad post-processing steps. Learn more [here](https://workflows.tidymodels.org/).
+Next, we'll create a tidymodels workflow. Workflows bundle pre-processing, modeling, and post-processing steps. Learn more about workflows [here](https://workflows.tidymodels.org/).
 
-The first step is to specify our model formula and preprocessing steps using the
+The first step is to specify our model formula and pre-processing steps using the
 [recipes package](https://recipes.tidymodels.org/). 
 
 ```r
@@ -349,7 +357,7 @@ lendingclub_rec <-
 ```
 
 Our recipe `lendingclub_rec` defines our model formula: we'll use all the other variables in the dataset
-to predict the interest rate. We also perform a few preprocessing steps, including
+to predict the interest rate. We also perform a few pre-processing steps, including
 turning `TERM` into a logical, normalizing all numeric predictors, and removing
 missing values.
 
@@ -360,7 +368,7 @@ is from the [parsnip package](https://parsnip.tidymodels.org/).
 lendingclub_lr <- linear_reg()
 ```
 
-Now, we can create our workflow, adding our linear model and preprocessing recipe. 
+Now, we can create our workflow, adding our linear model and pre-processing recipe. 
 
 ```r
 lendingclub_wf <- 
@@ -395,7 +403,7 @@ Linear Regression Model Specification (regression)
 Computational engine: lm 
 ```
 
-Notice that it includes our preprocessing steps and model specification. 
+Notice that it includes our pre-processing steps and model specification. 
 
 ### Fit model and compute metrics
 
@@ -432,10 +440,10 @@ lendingclub_metrics <-
 
 ### Version model with vetiver
 
-[Vetiver](https://rstudio.github.io/vetiver-r/) provides tools to version, share, 
+The [vetiver](https://rstudio.github.io/vetiver-r/) package provides tools to version, share, 
 deploy, and monitor models. 
 
-We'll use vetiver to version and deploy our fitted model to a  [pin](https://pins.rstudio.com/) on [Posit Connect](https://posit.co/products/enterprise/connect/). 
+We'll use vetiver to version and write our fitted model to a [pin](https://pins.rstudio.com/) on [Posit Connect](https://posit.co/products/enterprise/connect/). 
 This will allow us to identify which version of our model is active and track
 performance against other models over time. 
 
@@ -450,8 +458,8 @@ board <- board_connect()
 > To run `rsconnect::board_connect()`, you'll first need to authenticate. The 
 > easiest way to authenticate is by navigating to `Tools` > `Global Options` > `Publishing` > `Connect`, and then following the instructions.
 
-Then, we create a vetiver model with `vetiver_model()`, supply the function our 
-fitted model, model name, and metadata contained our metrics. 
+Then, we create a vetiver model with `vetiver_model()`, supplying the function with our 
+fitted model, model name, and metadata containing our metrics. 
 
 ```r
 model_name <- "interest_rate_prediction"
@@ -461,7 +469,11 @@ v <-
     model_name,
     metadata = list(metrics = lendingclub_metrics)
   )
+```
 
+`vetiver_pin_write()` writes the vetiver model to Posit Connect as a pin.
+
+```r
 board |> vetiver_pin_write(v)
 ```
 
@@ -470,8 +482,6 @@ board |> vetiver_pin_write(v)
 > If you run into a namespacing error in Connect, or a permissioning error in Snowflake, that 
 > may mean someone has already run this code with the same `model_name`. You'll need to pick 
 > a different value. 
-
-`vetiver_pin_write()` writes the vetiver model to Posit Connect as a pin.
 
 We can use `pin_versions()` to return all the different versions of this model. 
 
@@ -553,7 +563,7 @@ sql_predictor
 <SQL> (((11.9604886671368 + (CASE WHEN ("TERM" = 'TRUE') THEN 1.0 WHEN NOT ("TERM" = 'TRUE') THEN 0.0 END * 4.30823403045859)) + ("BC_UTIL" * 0.167923700948935)) + ("BC_OPEN_TO_BUY" * -0.892522593408621)) + ("ALL_UTIL" * 0.684415441909473) AS .pred
 ```
 
-Notice that you can see all the preprocessing steps and model prediction steps.
+Notice that you can see all the pre-processing steps and model prediction steps.
 
 ### Run predictions in Snowflake
 
@@ -649,7 +659,7 @@ Another is to write our model prediction function as a [view](https://docs.snowf
 > anytime the view is called. 
 
 
-First, we need to construct the SQL query that we want to store in our view.
+To create this view, we first need to construct the SQL query that we want to store in the view.
 
 ```r
 view_sql <-
@@ -1008,8 +1018,8 @@ END AS INT) AS "ISSUE_MONTH"
 ) "q01"
 ```
 
-This SQL code uses our model to compute a predicted value for each loan in the `LOAN_DATA`
-table. It creates a table with two columns `ID` and `.PRED`, which are all we need
+This SQL query uses our model to compute a predicted value for each loan in the `LOAN_DATA`
+table. It creates a table with two columns, `ID` and `.PRED`, which are all we need
 when creating a table of predictions. Later, if someone wants to use our prediction table,
 they can use the `ID` column to join the predictions back to the loan data. 
 
@@ -1114,8 +1124,8 @@ Duration: 1
 
 As new data comes in over time, it would be useful to be able to refit our model.
 We can refit periodically, monitor performance, and store the best-performing
-version on Posit Connect. We won't cover this process in detail in this Quickstart,
-but we've put together sample code for this process in [this Quarto document](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/refit.qmd).
+version on Posit Connect. We won't cover this in detail here,
+but we've put together sample code for the process in [this Quarto document](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/refit.qmd).
 
 ## Conclusion and Resources
 Duration: 2
