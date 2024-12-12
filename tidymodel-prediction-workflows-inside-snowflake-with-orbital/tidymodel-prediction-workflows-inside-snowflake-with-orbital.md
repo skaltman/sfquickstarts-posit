@@ -514,7 +514,7 @@ Now, we're ready to deploy the model with orbital and Snowflake.
 ## Predict with orbital and Snowflake
 Duration: 10
 
-The orbital package allows you to run tidymodels workflow predictions inside 
+The [orbital package](https://orbital.tidymodels.org/) allows you to run tidymodels workflow predictions inside 
 databases, including Snowflake, substantially speeding up the prediction process. 
 
 To do so, orbital converts tidymodels workflows into SQL that can run on Snowflake.
