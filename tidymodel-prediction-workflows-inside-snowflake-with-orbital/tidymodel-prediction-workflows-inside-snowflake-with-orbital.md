@@ -98,7 +98,7 @@ security and governance protocols.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
+In your Snowflake account, go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. Installation and configuration also require a valid license file from Posit.
 
 ![](assets/snowflake/05-get_posit_workbench.png)
 
