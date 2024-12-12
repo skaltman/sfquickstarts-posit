@@ -1118,7 +1118,7 @@ with Snowflake, including Snowsight, as shown below.
 ## Refitting models in Snowflake with Posit Connect
 Duration: 1
 
-As new data comes in over time, it would be useful to be able to refit our model.
+As new data comes in over time, it is useful to refit our model.
 We can refit periodically, monitor performance, and store the best-performing
 version on Posit Connect. We won't cover this in detail here,
 but we've put together sample code for the process in [this Quarto document](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/refit.qmd).
