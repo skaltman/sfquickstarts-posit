@@ -519,7 +519,7 @@ databases, including Snowflake, substantially speeding up the prediction process
 
 To do so, orbital converts tidymodels workflows into SQL that can run on Snowflake.
 You can then either use that SQL to run the predictions of that model or deploy the
-model directly to Snowflake. 
+model directly to Snowflake as a view. 
 
 ### Convert workflow to orbital
 
