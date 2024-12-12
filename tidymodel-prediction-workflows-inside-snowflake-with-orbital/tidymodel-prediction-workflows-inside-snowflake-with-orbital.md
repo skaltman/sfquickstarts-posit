@@ -257,7 +257,7 @@ con <- dbConnect(
 >
 > You may need to change `warehouse`, `database`, and `schema` to match your environment.
 
-`con` now stores our connection. 
+`con` now stores our Snowflake connection. 
 
 Once connected, we can view available databases, schemas, and tables in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click the table icon to preview the table.
 
