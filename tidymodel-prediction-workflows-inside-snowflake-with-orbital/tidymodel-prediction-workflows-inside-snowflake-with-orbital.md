@@ -508,6 +508,7 @@ At this point, we've:
 1. Fit a model
 2. Evaluated that model
 3. Versioned the model with vetiver
+4. Stored the model as a pin on Posit Connect
 
 Now, we're ready to deploy the model with orbital and Snowflake. 
 
