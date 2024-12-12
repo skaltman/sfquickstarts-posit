@@ -646,7 +646,7 @@ setting `temporary = FALSE` in `compute()`:
 ```r
 preds <- 
   predict(orbital_obj, lendingclub_dat) |>
-  compute(name = "LENDING_CLUB_PREDICTIONS")
+  compute(name = "LENDING_CLUB_PREDICTIONS", temporary = FALSE)
 ```
 
 Another is to write our model prediction function as a [view](https://docs.snowflake.com/en/user-guide/views-introduction). 
