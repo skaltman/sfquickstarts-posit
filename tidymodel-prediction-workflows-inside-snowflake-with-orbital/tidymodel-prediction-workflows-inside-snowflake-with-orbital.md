@@ -652,7 +652,7 @@ Another is to write our model prediction function as a [view](https://docs.snowf
 > aside positive
 > 
 > A view allows query results to be accessed like a table. The query will execute
-> anytime the view is called. 
+> anytime the view is called, and will run on any new data that has been added to the table.
 
 
 To create this view, we first need to construct the SQL query that we want to store in the view.
