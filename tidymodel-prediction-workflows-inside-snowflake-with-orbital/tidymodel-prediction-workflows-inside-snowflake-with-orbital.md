@@ -67,7 +67,7 @@ Before we begin there are a few components we need to prepare. We need to:
 
 For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an [S3 bucket](s3://posit-snowflake-mlops).
 
-The data contains information for about 2.3 million loans from Southern US states.
+The data contains information for about 2.3 million loans from the Southern US states.
 
 #### Add data
 
