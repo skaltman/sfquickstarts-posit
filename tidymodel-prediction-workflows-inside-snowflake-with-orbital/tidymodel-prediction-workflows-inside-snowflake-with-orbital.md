@@ -37,7 +37,7 @@ example model in this Quickstart.
 
 ### What You’ll Learn
 
-- How to create a tidymodels workflow that bundles pre-processing, modeling, and post-processing steps. 
+- How to create a tidymodels workflow that bundles pre-processing and modeling steps. 
 - How to transform that workflow into Snowflake SQL with orbital. 
 - How to run model predictions on Snowflake using orbital. 
 - How to create Snowflake views to store and share model predictions. 
