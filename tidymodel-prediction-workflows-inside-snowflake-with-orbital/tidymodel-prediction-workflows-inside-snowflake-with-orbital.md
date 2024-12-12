@@ -1134,6 +1134,7 @@ In this Quickstart, you learned how to use orbital and tidymodels to build, depl
 
 - How to use the Posit Workbench Native App to interact with Snowflake from the RStudio IDE.
 - How to create a tidymodels workflow with the recipes and workflows packages.
+- How to use vetiver to version models and store them as pins on Posit Connect.
 - How to use orbital package to convert tidymodels workflows into SQL and run predictions directly inside Snowflake.
 - How to deploy predictions as Snowflake views.
 
