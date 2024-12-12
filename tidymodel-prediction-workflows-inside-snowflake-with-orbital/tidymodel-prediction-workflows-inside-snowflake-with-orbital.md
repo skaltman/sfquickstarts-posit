@@ -34,6 +34,7 @@ example model in this Quickstart.
   - Create databases, schemas and tables
   - Create stages
   - Load data from S3
+- Access to [Posit Connect](https://posit.co/products/enterprise/connect/)
 
 ### What You’ll Learn
 
