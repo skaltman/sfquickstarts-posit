@@ -25,25 +25,7 @@ With the orbital package, you can:
 We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an 
 example model in this Quickstart. 
 
-### What You'll Need
-
-- Familiarity with R
-- Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/) 
-- The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
-- A Snowflake account with an `accountadmin` role or role that allows you to:
-  - Create databases, schemas and tables
-  - Create stages
-  - Load data from S3
-- Access to [Posit Connect](https://posit.co/products/enterprise/connect/)
-
-### What You’ll Learn
-
-- How to create a tidymodels workflow that bundles pre-processing and modeling steps. 
-- How to transform that workflow into Snowflake SQL with orbital. 
-- How to run model predictions on Snowflake using orbital. 
-- How to create Snowflake views to store and share model predictions. 
-
-### What You’ll Build
+### What You Will Build
 
 - An RStudio Pro IDE environment to use within Snowflake.
 - An R Script that builds a model workflow using the tidymodels framework, then
@@ -53,6 +35,24 @@ transforms that workflow into Snowflake SQL with orbital.
 You can follow along with this Quickstart guide,
 or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-orbital>.
+
+### What You Will Learn
+
+- How to create a tidymodels workflow that bundles pre-processing and modeling steps. 
+- How to transform that workflow into Snowflake SQL with orbital. 
+- How to run model predictions on Snowflake using orbital. 
+- How to create Snowflake views to store and share model predictions. 
+
+### Prerequisites
+
+- Familiarity with R
+- Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/) 
+- The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
+- A Snowflake account with an `accountadmin` role or role that allows you to:
+  - Create databases, schemas and tables
+  - Create stages
+  - Load data from S3
+- Access to [Posit Connect](https://posit.co/products/enterprise/connect/)
 
 ## Setup
 Duration: 5
@@ -64,13 +64,13 @@ Before we begin there are a few components we need to prepare. We need to:
 - Create an RStudio Pro IDE session
 - Install necessary R Packages
 
-### Add the Lending Club data to Snowflake
+### Add the Lending Club Data to Snowflake
 
 For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an [S3 bucket](s3://posit-snowflake-mlops).
 
 The data contains information for about 2.3 million loans from the Southern US states.
 
-#### Add data
+#### Add Data
 
 In Snowsight, click `Create` > `SQL Worksheet`. Copy [this SQL code](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/setup.sql) and paste it
 into the worksheet. Run the code to create the database and table you'll need for
@@ -81,7 +81,7 @@ this Quickstart.
 > You may need to change the role granted usage from `SYSADMIN` to your desired
 > role.
 
-#### Confirm data
+#### Confirm Data
 
 After running the code, you should be able to see the Lending Club data in Snowsight.
 
@@ -189,7 +189,7 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 ### Install R Packages
 
 Now that we're in a familiar R environment, we need to install the necessary packages.
-We'll use the [tidymodels](https://www.tidyverse.org/) ecosystem of packages, as well as a few others.
+We'll use the [tidymodels](https://www.tidymodels.org/) ecosystem of packages, as well as a few others.
 
 ```r
 install.packages(
@@ -231,7 +231,7 @@ library(tidypredict)
 library(ggplot2)
 ```
 
-## Access and prepare Snowflake data from R
+## Access and Prepare Snowflake Data from R
 Duration: 5
 
 Before starting the modeling process, we need to connect to our database and load
@@ -264,7 +264,7 @@ Once connected, we can view available databases, schemas, and tables in the RStu
 
 <img src="assets/rstudio/02-connections.png" style="width: 400px; height: auto;" />
 
-### Create and manipulate a `tbl`
+### Create and Manipulate a `tbl`
 
 Once we build a connection, we can use `dplyr::tbl()` to create `tbl`s. A tbl is an R object that represents a table or view accessed through a connection.
 
@@ -333,10 +333,10 @@ lendingclub_prep <-
 
 `collect()` executes a query and returns the _entire_ result as a tibble, so `lendingclub_prep` now contains our entire filtered sample. 
 
-## Create model with tidymodels
+## Create Model with tidymodels
 Duration: 10
 
-### Create a workflow
+### Create a Workflow
 
 Next, we'll create a tidymodels workflow. Workflows bundle pre-processing, modeling, and post-processing steps. Learn more about workflows [here](https://workflows.tidymodels.org/).
 
@@ -403,7 +403,7 @@ Computational engine: lm
 
 Notice that it includes our pre-processing steps and model specification. 
 
-### Fit model and compute metrics
+### Fit Model and Compute Metrics
 
 Now that we have our workflow object `lendingclub_wf`, we can use it to fit our model. 
 
@@ -436,7 +436,7 @@ lendingclub_metrics <-
 3 rsq     standard       0.233
 ```
 
-### Version model with vetiver
+### Version Model with vetiver
 
 The [vetiver](https://rstudio.github.io/vetiver-r/) package provides tools to version, share, 
 deploy, and monitor models. 
@@ -523,7 +523,7 @@ To do so, orbital converts tidymodels workflows into SQL that can run on Snowfla
 You can then either use that SQL to run the predictions of that model or deploy the
 model directly to Snowflake as a view. 
 
-### Convert workflow to orbital
+### Convert Workflow to orbital
 
 Let's convert our tidymodels object into an orbital object with `orbital()`.
 
@@ -564,7 +564,7 @@ sql_predictor
 
 Notice that you can see all the pre-processing steps and model prediction steps.
 
-### Run predictions in Snowflake
+### Run Predictions in Snowflake
 
 Now that we've converted our tidymodels workflow object to SQL with orbital, we can 
 run model predictions inside Snowflake. 
@@ -635,7 +635,7 @@ Time difference of 3.027164 secs
 
 2,260,702 predictions in just 3.02 seconds—thanks to Snowflake and orbital!
 
-## Deploy model as a Snowflake view
+## Deploy Model as a Snowflake View
 Duration: 5
 
 Next, we'll deploy our model so others can use it. We have a couple of options.
@@ -678,6 +678,8 @@ a look at the result.
 view_sql
 ```
 
+<details>
+  <summary>Click to expand `view_sql`</summary>
 ```
 <SQL> SELECT
   "ID",
@@ -1015,6 +1017,7 @@ END AS INT) AS "ISSUE_MONTH"
   ) "q01"
 ) "q01"
 ```
+</details>
 
 This SQL query uses our model to compute a predicted value for each loan in the `LOAN_DATA`
 table. It creates a table with two columns, `ID` and `.PRED`, which are all we need
@@ -1057,7 +1060,7 @@ con |>
 
 Our view is now in Snowflake and ready to use!
 
-### Create a latest view
+### Create a Latest View
 
 So far, we've only created one view for our one model version. But what if you have
 multiple views corresponding to multiple versions of your model? It would be helpful
@@ -1117,7 +1120,7 @@ with Snowflake, including Snowsight, as shown below.
 
 ![](assets/snowflake/snowsight-view.png)
 
-## Refitting models in Snowflake with Posit Connect
+## Refitting Models in Snowflake with Posit Connect
 Duration: 1
 
 As new data comes in over time, it is useful to refit our model.
@@ -1129,6 +1132,8 @@ but we've put together sample code for the process in [this Quarto document](htt
 
 ## Conclusion and Resources
 Duration: 2
+
+### Conclusion
 
 In this Quickstart, you learned how to use orbital and tidymodels to build, deploy, and run predictions directly in Snowflake. By combining the power of Snowflake with the flexibility of R, you can efficiently scale your modeling workflows and share results as views, all within a secure environment.
 
